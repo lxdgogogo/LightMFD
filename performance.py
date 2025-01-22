@@ -32,20 +32,20 @@ def train(config: dict, graph_data):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='LightMGFD')
     parser.add_argument("--dataset", type=str, default="ACM",
-                        help="Dataset for this model (yelp/amazon)")  # ACM DBLP
-    parser.add_argument("--train_ratio", type=float, default=0.05, help="Training ratio")  # 0.4
+                        help="Dataset for this model (yelp/amazon/ACM/DBLP)")
+    parser.add_argument("--train_ratio", type=float, default=0.05, help="Training ratio")
     parser.add_argument("--lr", type=float, default=0.02, help="Learning rate")
     parser.add_argument("--max_depth", type=int, default=12, help="Maximum tree depth of XGBoost")
     parser.add_argument("--T", type=int, default=200, help="Number of estimator trees of XGBoost")
     parser.add_argument("--theta", type=float, default=1, help="Parameter theta")
-    parser.add_argument("--device", type=str, default='cpu', help="Device")
+    parser.add_argument("--device", type=str, default='cuda', help="Device (cpu/cuda)")
     args = parser.parse_args()
     train_config = {'n_estimators': args.T, 'learning_rate': args.lr, 'max_depth': args.max_depth,
                     'dataset': args.dataset, 'device': args.device, 'theta': args.theta, 'training_ratio': args.train_ratio}
     dataset = train_config['dataset']
     data = Dataset(dataset, train_config['device'])
     nodes, mask, y, train_idx, test_idx, y_train, y_test, feat_data, edge_index = data.process_data(
-        train_config['training_ratio'], train_config['device'])
+        train_config['training_ratio'])
     graph_data = {'train_idx': train_idx, 'test_idx': test_idx, 'y_train': y_train, 'y_test': y_test,
                   'feat_data': feat_data, 'edge_index': edge_index, 'nodes': nodes, 'mask': mask, 'labels': y}
     print(args)
